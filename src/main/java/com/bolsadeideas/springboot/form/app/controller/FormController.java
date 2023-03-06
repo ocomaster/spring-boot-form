@@ -26,8 +26,13 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.expression.Arrays;
 
 import com.bolsadeideas.springboot.form.app.editors.NombreMayusculaEditor;
+import com.bolsadeideas.springboot.form.app.editors.PaisPropertyEditor;
+import com.bolsadeideas.springboot.form.app.editors.RolesEditor;
 import com.bolsadeideas.springboot.form.app.models.domain.Pais;
+import com.bolsadeideas.springboot.form.app.models.domain.Role;
 import com.bolsadeideas.springboot.form.app.models.domain.Usuario;
+import com.bolsadeideas.springboot.form.app.services.PaisService;
+import com.bolsadeideas.springboot.form.app.services.RoleService;
 import com.bolsadeideas.springboot.form.app.validation.UsuarioValidador;
 
 @Controller
@@ -36,6 +41,17 @@ public class FormController {
 
 	@Autowired
 	private UsuarioValidador validador;
+	
+	@Autowired
+	private PaisService paisService;
+	
+	@Autowired
+	private PaisPropertyEditor paisEditor;
+	
+	@Autowired
+	private RolesEditor rolesEditor;
+	
+	@Autowired RoleService roleService;
 	
 	@InitBinder//2 opcion de validacion de manera implicita o mas trasparente
 	public void initBinder(WebDataBinder binder) {
@@ -46,12 +62,17 @@ public class FormController {
 		
 		//Aplicar la clase con el metodo NombreMayuscula
 		binder.registerCustomEditor(String.class,"nombre", new NombreMayusculaEditor());
+		binder.registerCustomEditor(Pais.class,"pais", paisEditor);
+		binder.registerCustomEditor(Role.class,"roles", rolesEditor);
 	}
 	
 	
 	@ModelAttribute("listaPaises")
 	public List<Pais> listaPaises(){
-		return  java.util.Arrays.asList( 
+		return  paisService.listar();
+				
+				
+				/*java.util.Arrays.asList( 
 				new Pais(1,"CO","Colombia"),
 				new Pais(2,"MXC","Mexico"),
 				new Pais(3,"VZ","Venezuela"),
@@ -59,8 +80,38 @@ public class FormController {
 				new Pais(5,"PU","Peru"),
 				new Pais(6,"Br","Brasil"),
 				new Pais(7,"CA","Canada"));
-			
+			*/
 	} 
+	
+	
+	@ModelAttribute("listaRolesString")
+	public List<String> listaRolesString(){
+		List<String> roles = new ArrayList<>();
+		roles.add("ROLE_ADMIN");
+		roles.add("ROLE_USER");
+		roles.add("ROLE_MODERATOR");
+		return roles;
+		
+	}
+	
+	@ModelAttribute("listaRolesMap")
+	public Map<String, String> listaRolesMap(){
+		Map<String, String> roles = new HashMap<String, String>();
+		
+		roles.put("ROLE_ADMIN", "Administrador");
+		roles.put("ROLE_USER", "Usuario");
+		roles.put("ROLE_MODERATOR", "Moderador");
+		
+		return roles;
+	} 
+	
+	@ModelAttribute("listaRoles")
+	public List<Role> listaRoles(){
+		return this.roleService.listar();
+	}
+	
+	
+	
 	
 	
 	@ModelAttribute("paises")
@@ -87,6 +138,7 @@ public class FormController {
 		usuario.setNombre("Carlos");
 		usuario.setApellido("vargas");
 		usuario.setIdentificador("123.456.478-K");
+		usuario.setHabilitar(true);
 		model.addAttribute("titulo", "Formulario Usuarios");
 		model.addAttribute("usuario", usuario);
 		return "form";

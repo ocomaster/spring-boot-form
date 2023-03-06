@@ -1,6 +1,7 @@
 package com.bolsadeideas.springboot.form.app.models.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -54,8 +55,13 @@ public class Usuario {
 	@Max(5000)
 	private Integer cuenta;
 	
-	@Valid
+	@NotNull
 	private Pais pais;
+	
+	@NotEmpty
+	private List<Role> roles;
+	
+	private boolean habilitar;
 	
 	
 	public String getUsername() {
@@ -111,6 +117,18 @@ public class Usuario {
 	}
 	public void setPais(Pais pais) {
 		this.pais = pais;
+	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	public boolean isHabilitar() {
+		return habilitar;
+	}
+	public void setHabilitar(boolean habilitar) {
+		this.habilitar = habilitar;
 	}
 	
 	
