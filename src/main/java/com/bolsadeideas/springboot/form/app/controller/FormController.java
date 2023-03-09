@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.expression.Arrays;
@@ -110,6 +111,10 @@ public class FormController {
 		return this.roleService.listar();
 	}
 	
+	@ModelAttribute("genero")
+	public List<String> genero(){
+		return java.util.Arrays.asList("Hombre", "Mujer");
+	}
 	
 	
 	
@@ -139,15 +144,22 @@ public class FormController {
 		usuario.setApellido("vargas");
 		usuario.setIdentificador("123.456.478-K");
 		usuario.setHabilitar(true);
+		usuario.setPais(paisService.obtenerPorId(1));
+		usuario.setValorSecreto("Algun valor secreto **********");
+		usuario.setRoles(java.util.Arrays.asList(new Role(3, "Moderador", "ROLE_MODERATOR"),new Role(1, "Administrador", "ROLE_ADMIN")));
 		model.addAttribute("titulo", "Formulario Usuarios");
 		model.addAttribute("usuario", usuario);
 		return "form";
 	}
 	
+	
+	
+	
+	
 	//Para capturar datos del formulario se indica con @RequestParam(name="username")
 	
 	@PostMapping("/form")
-	public String procesarFomulario(@Valid Usuario usuario, BindingResult result, Model model, SessionStatus status) {
+	public String procesarFomulario(@Valid Usuario usuario, BindingResult result, Model model) {
 		//	@RequestParam String username,
 		//  @RequestParam(name = "password") String password,
 		//	@RequestParam String email) {
@@ -158,7 +170,7 @@ public class FormController {
 		//usuario.setPassword(password);
 		//usuario.setEmail(email);
 		//validador.validate(usuario, result); //1 se valida de forma explicita usando el metodo validate
-		model.addAttribute("titulo", "Resultado del formulario" );
+		//model.addAttribute("titulo", "Resultado del formulario" );
 		
 		//Condicion If para detectar los errores que no cumplen anotaciones en el modelo
 		if (result.hasErrors()) {	
@@ -168,12 +180,25 @@ public class FormController {
 				errores.put(err.getField(), "El campo ".concat(err.getField()).concat(" ").concat(err.getDefaultMessage()));
 			});
 			model.addAttribute("error", errores); */
-			
+			model.addAttribute("titulo", "Resultado del formulario" );
 			return "form";
 		}
 		//model.addAttribute("username", username );
-		model.addAttribute("usuario", usuario);
+		
+		return "redirect:/ver";
+	}
+	
+	@GetMapping("/ver")
+	public String ver(@SessionAttribute(name="usuario", required = false)Usuario usuario, Model model, SessionStatus status) {
+		if (usuario == null) {
+			return "redirect:/form";
+		}
+		
+		model.addAttribute("titulo", "Resultado del formulario" );
 		status.setComplete();
 		return "resultado";
 	}
+	
+	
+	
 }

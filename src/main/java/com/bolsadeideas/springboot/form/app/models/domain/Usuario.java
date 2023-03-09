@@ -28,6 +28,8 @@ public class Usuario {
 	@IdentificadorRegex
 	private String identificador;
 	
+	private Integer id;
+	
 	//@NotEmpty
 	private String nombre; 
 	//@Requerido
@@ -62,6 +64,10 @@ public class Usuario {
 	private List<Role> roles;
 	
 	private boolean habilitar;
+	
+	private String genero;
+	
+	private String valorSecreto;
 	
 	
 	public String getUsername() {
@@ -130,6 +136,30 @@ public class Usuario {
 	public void setHabilitar(boolean habilitar) {
 		this.habilitar = habilitar;
 	}
+	public String getGenero() {
+		return genero;
+	}
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+	public String getValorSecreto() {
+		return valorSecreto;
+	}
+	public void setValorSecreto(String valorSecreto) {
+		this.valorSecreto = valorSecreto;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	@Override
+	public String toString() {
+	
+		return this.id.toString();
+	}
+	
 	
 	
 	
